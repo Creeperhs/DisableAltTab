@@ -14,8 +14,10 @@ object AltTabHook : BaseHook() {
             }.hookBefore { param ->
                 run {
                     val arg1: KeyEvent = param.args[1] as KeyEvent;
-                    XposedBridge.log("DisableAltTab: pressed..")
-                    XposedBridge.log(arg1.keyCode)
+                    XposedBridge.log("DisableAltTab: Key pressed - keyCode: ${arg1.keyCode}")
+                    XposedBridge.log("DisableAltTab: Alt pressed: ${arg1.isAltPressed}")
+                    XposedBridge.log("DisableAltTab: Meta pressed: ${arg1.isMetaPressed}")
+                    XposedBridge.log("DisableAltTab: Action: ${if (arg1.action == KeyEvent.ACTION_DOWN) "DOWN" else "UP"}")
                     // alt-tab
                     if ((arg1.isAltPressed && arg1.keyCode == 61)) {
                         param.result = 0L;
