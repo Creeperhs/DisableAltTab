@@ -5,7 +5,7 @@ on:
     branches: [ main, master, develop ]
   pull_request:
     branches: [ main, master, develop ]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -30,23 +30,24 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew assembleDebug
       
-    - name: List generated build files
+    - name: Debug - List all files and directories
       run: |
-        echo "=== 生成的APK文件 ==="
+        echo "=== 当前目录结构 ==="
+        find . -type f -name "*.apk" | head -20
+        echo "=== 详细查找APK文件 ==="
         find . -name "*.apk" -type f
-        echo "=== 构建输出目录结构 ==="
+        echo "=== build目录内容 ==="
         find . -name "build" -type d
+        echo "=== app目录内容 ==="
+        ls -la app/ || echo "No app directory"
+        echo "=== 根目录内容 ==="
+        ls -la
       
-    - name: Upload APK artifact
+    - name: Upload any found APK files
       uses: actions/upload-artifact@v4
       with:
-        name: DisableAltTab-debug-apk
-        path: app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 7
-        
-    - name: Upload all APKs (备用)
-      uses: actions/upload-artifact@v4
-      with:
-        name: all-apk-files
-        path: /build/outputs/apk//*.apk
+        name: found-apk-files
+        path: |
+          **/*.apk
+        if-no-files-found: warn
         retention-days: 7
